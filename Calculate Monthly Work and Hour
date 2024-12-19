@@ -1,0 +1,37 @@
+import csv
+
+# Ask user for input and output file paths
+input_file = input("Enter the path to the input CSV file: ")
+output_file = input("Enter the path to save the output CSV file: ")
+
+try:
+    # Open and read the input CSV file
+    with open(input_file, mode='r') as csv_file:
+        reader = csv.DictReader(csv_file)
+        
+        # Create and write to the output CSV file
+        with open(output_file, mode='w', newline='') as output_csv:
+            fieldnames = ['ID', 'Name', 'Hourly Rate', 'Hours Worked', 'Total Pay']
+            writer = csv.DictWriter(output_csv, fieldnames=fieldnames)
+            writer.writeheader()
+            
+            # Process each row in the input file
+            for row in reader:
+                try:
+                    # Calculate total pay
+                    total_pay = float(row['Hourly Rate']) * float(row['Hours Worked'])
+                    
+                    # Write the result to the output file
+                    writer.writerow({
+                        'ID': row['ID'],
+                        'Name': row['Name'],
+                        'Hourly Rate': row['Hourly Rate'],
+                        'Hours Worked': row['Hours Worked'],
+                        'Total Pay': total_pay
+                    })
+                except ValueError:
+                    print(f"Error processing row: {row}. Ensure data types are correct.")
+                    
+    print("Process completed successfully. Output saved to:", output_file)
+except FileNotFoundError:
+    print("Error: Input file not found.")
